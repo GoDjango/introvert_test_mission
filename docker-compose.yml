@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  db:
+    image: mongo:5.0.11
+    restart: always
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: 12345
+    volumes:
+      - ./build/db_init.js:/docker-entrypoint-initdb.d/db_init.js
+
+  server:
+    build: .
+    depends_on:
+      - db
+    ports:
+      - 8080:8080
+    entrypoint: server
+    environment:
+      MONGO_URL: "mongodb://root:12345@db/"
